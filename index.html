@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#4F46E5">
+  <title>LinkHub — Pengumpulan Link</title>
+  <style>
+    :root {
+      --primary: #4F46E5;
+      --primary-dark: #4338CA;
+      --bg: #FFFFFF;
+      --surface: #F9FAFB;
+      --text: #111827;
+      --muted: #6B7280;
+      --border: #E5E7EB;
+      --danger: #DC2626;
+      --success: #047857;
+      --radius: 16px;
+      --shadow: 0 10px 30px rgba(17, 24, 39, .06);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+    }
+    button, input, select { font: inherit; }
+    button, a, input, select { -webkit-tap-highlight-color: transparent; }
+    .topbar { border-bottom: 1px solid var(--border); background: rgba(255,255,255,.94); }
+    .topbar-inner { max-width: 1080px; margin: auto; padding: 18px 24px; display: flex; align-items: center; gap: 12px; }
+    .logo { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; color: white; background: var(--primary); font-size: 20px; font-weight: 800; }
+    .brand-name { margin: 0; font-size: 18px; font-weight: 800; letter-spacing: -.4px; }
+    .brand-sub { margin: 1px 0 0; color: var(--muted); font-size: 12px; }
+    main { max-width: 1080px; padding: 42px 24px 64px; margin: auto; }
+    .hero { margin-bottom: 28px; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 7px; padding: 6px 10px; border-radius: 999px; color: var(--primary); background: #EEF2FF; font-size: 12px; font-weight: 700; }
+    h1 { margin: 14px 0 8px; font-size: clamp(28px, 4vw, 40px); line-height: 1.15; letter-spacing: -1.2px; }
+    .hero p { margin: 0; max-width: 620px; color: var(--muted); }
+    .panel { border: 1px solid var(--border); border-radius: var(--radius); background: #fff; box-shadow: var(--shadow); }
+    .form-panel { padding: 24px; }
+    .panel-heading { margin: 0 0 4px; font-size: 18px; letter-spacing: -.3px; }
+    .panel-description { margin: 0 0 20px; color: var(--muted); font-size: 14px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1.4fr auto; gap: 14px; align-items: end; }
+    .field { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+    label { font-size: 13px; font-weight: 700; }
+    input, select { width: 100%; min-width: 0; border: 1px solid #D1D5DB; border-radius: 10px; background: white; padding: 11px 12px; color: var(--text); outline: none; transition: border-color .15s, box-shadow .15s; }
+    input::placeholder { color: #9CA3AF; }
+    input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,.13); }
+    .btn { border: 0; border-radius: 10px; padding: 11px 16px; cursor: pointer; font-weight: 700; transition: background .15s, transform .15s; white-space: nowrap; }
+    .btn:active { transform: translateY(1px); }
+    .btn-primary { color: white; background: var(--primary); }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .message { min-height: 20px; margin-top: 12px; font-size: 13px; color: var(--success); }
+    .message.error { color: var(--danger); }
+    .list-section { margin-top: 32px; }
+    .list-heading { display: flex; justify-content: space-between; align-items: end; gap: 16px; margin-bottom: 16px; }
+    .list-heading h2 { margin: 0; font-size: 22px; letter-spacing: -.5px; }
+    .list-heading p { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
+    .count { display: inline-flex; align-items: center; justify-content: center; min-width: 32px; height: 28px; padding: 0 9px; border-radius: 999px; color: var(--primary); background: #EEF2FF; font-size: 13px; font-weight: 800; }
+    .toolbar { display: grid; grid-template-columns: minmax(0, 1fr) 220px; gap: 12px; padding: 16px; border-bottom: 1px solid var(--border); background: var(--surface); border-radius: var(--radius) var(--radius) 0 0; }
+    .search-wrap { position: relative; }
+    .search-wrap span { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+    .search-wrap input { padding-left: 38px; background: white; }
+    .table-wrap { overflow-x: auto; border-radius: 0 0 var(--radius) var(--radius); }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    thead { background: white; }
+    th { padding: 13px 16px; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .7px; font-weight: 800; border-bottom: 1px solid var(--border); }
+    td { padding: 16px; border-bottom: 1px solid #F1F2F4; font-size: 14px; vertical-align: middle; }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr:hover { background: #FCFCFD; }
+    .number { color: var(--muted); width: 54px; }
+    .user-cell { display: flex; align-items: center; gap: 11px; min-width: 150px; }
+    .avatar { flex: 0 0 36px; width: 36px; height: 36px; display: grid; place-items: center; border-radius: 11px; background: #EEF2FF; color: var(--primary); font-weight: 800; text-transform: uppercase; }
+    .user-name { font-weight: 750; overflow-wrap: anywhere; }
+    .link-anchor { display: inline-block; max-width: 260px; color: var(--primary); text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: bottom; }
+    .link-anchor:hover { text-decoration: underline; }
+    .time { color: var(--muted); font-size: 12px; white-space: nowrap; }
+    .delete-btn { padding: 7px 10px; border: 1px solid #FECACA; border-radius: 8px; background: #FFF; color: var(--danger); cursor: pointer; font-size: 12px; font-weight: 700; }
+    .delete-btn:hover { background: #FEF2F2; }
+    .empty { padding: 48px 20px; text-align: center; }
+    .empty-icon { display: grid; place-items: center; width: 48px; height: 48px; margin: 0 auto 12px; border-radius: 15px; background: #EEF2FF; color: var(--primary); font-size: 23px; }
+    .empty h3 { margin: 0 0 5px; font-size: 16px; }
+    .empty p { margin: 0; color: var(--muted); font-size: 13px; }
+    footer { padding: 22px 24px; border-top: 1px solid var(--border); color: var(--muted); text-align: center; font-size: 12px; }
+    @media (max-width: 760px) {
+      main { padding: 30px 16px 48px; }
+      .topbar-inner { padding: 14px 16px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .form-grid .btn { width: 100%; }
+      .form-panel { padding: 18px; }
+      .toolbar { grid-template-columns: 1fr; }
+      .list-heading { align-items: start; }
+      .table-wrap { overflow: visible; }
+      table, tbody, tr, td { display: block; width: 100%; }
+      thead { display: none; }
+      tbody { padding: 4px 14px; }
+      tbody tr { position: relative; padding: 14px 0; border-bottom: 1px solid var(--border); }
+      tbody tr:last-child { border-bottom: 0; }
+      td { padding: 5px 0; border: 0; }
+      td.number { display: none; }
+      td.user-col { padding-right: 65px; }
+      td.link-col { padding-left: 47px; }
+      td.time-col { padding-left: 47px; }
+      td.action-col { position: absolute; top: 18px; right: 0; width: auto; }
+      .link-anchor { max-width: calc(100vw - 105px); }
+      .time { white-space: normal; }
+    }
+    @media (max-width: 600px) {
+      body { font-size: 15px; }
+      .topbar-inner { gap: 10px; padding: 12px 14px; }
+      .logo { width: 36px; height: 36px; border-radius: 10px; }
+      .brand-name { font-size: 16px; }
+      .brand-sub { font-size: 11px; }
+      main { padding: 24px 12px 36px; }
+      .hero { margin-bottom: 20px; }
+      .eyebrow { font-size: 11px; }
+      h1 { margin-top: 12px; font-size: clamp(27px, 8vw, 34px); letter-spacing: -.8px; }
+      .hero p { font-size: 14px; }
+      .form-panel { padding: 16px 14px; }
+      .panel-heading { font-size: 17px; }
+      .panel-description { margin-bottom: 16px; font-size: 13px; }
+      .form-grid { gap: 12px; }
+      input, select { min-height: 46px; font-size: 16px; }
+      .btn { min-height: 46px; }
+      .message { margin-top: 8px; }
+      .list-section { margin-top: 26px; }
+      .list-heading { align-items: center; gap: 10px; }
+      .list-heading h2 { font-size: 20px; }
+      .list-heading p { max-width: 260px; font-size: 12px; }
+      .toolbar { gap: 12px; padding: 12px; }
+      .toolbar .field { gap: 6px; }
+      .table-wrap { padding: 0 10px; }
+      table, tbody, tr, td { display: block; width: 100%; }
+      thead { display: none; }
+      tbody { padding: 10px 0; }
+      tbody tr {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 8px 10px;
+        padding: 14px 12px;
+        margin-bottom: 10px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: #fff;
+      }
+      tbody tr:last-child { border-bottom: 1px solid var(--border); }
+      tbody tr:hover { background: #fff; }
+      td { min-width: 0; padding: 0; border: 0; }
+      td.number { display: none; }
+      td.user-col { grid-column: 1 / 2; grid-row: 1; padding: 0; }
+      .user-cell { min-width: 0; gap: 9px; }
+      .avatar { flex-basis: 34px; width: 34px; height: 34px; }
+      .user-name { font-size: 14px; }
+      td.action-col { position: static; grid-column: 2; grid-row: 1; width: auto; align-self: center; }
+      .delete-btn { min-height: 34px; padding: 6px 9px; }
+      td.link-col { grid-column: 1 / -1; grid-row: 2; padding: 0; }
+      td.link-col::before { content: "LINK"; display: block; margin-bottom: 3px; color: var(--muted); font-size: 10px; font-weight: 800; letter-spacing: .6px; }
+      .link-anchor { display: block; max-width: 100%; overflow-wrap: anywhere; white-space: normal; word-break: break-word; font-size: 13px; }
+      td.time-col { grid-column: 1 / -1; grid-row: 3; padding: 0; }
+      td.time-col::before { content: "WAKTU INPUT"; display: block; margin-bottom: 2px; color: var(--muted); font-size: 10px; font-weight: 800; letter-spacing: .6px; }
+      .time { font-size: 12px; white-space: normal; }
+      .empty { padding: 36px 14px; }
+      footer { padding: 18px 12px; }
+    }
+    @media (max-width: 360px) {
+      main { padding-right: 10px; padding-left: 10px; }
+      .form-panel { padding: 14px 12px; }
+      .toolbar { padding: 10px; }
+      .list-heading p { max-width: 220px; }
+      tbody tr { padding: 12px 10px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; scroll-behavior: auto !important; } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="logo" aria-hidden="true">↗</div>
+      <div>
+        <p class="brand-name">Link Storage</p>
+        <p class="brand-sub">Pengumpulan link dalam satu tempat</p>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <span class="eyebrow">Direktori link sederhana</span>
+      <h1>Kumpulkan link,<br>lebih mudah dikelola.</h1>
+      <p>Masukkan nama dan tautan, lalu cari atau urutkan daftar sesuai kebutuhan. Data tersimpan di IndexedDB browser yang kamu gunakan.</p>
+    </section>
+
+    <section class="panel form-panel" aria-labelledby="form-title">
+      <h2 class="panel-heading" id="form-title">Tambah link baru</h2>
+      <p class="panel-description">Lengkapi kedua kolom berikut untuk menambahkan data ke daftar.</p>
+      <form id="link-form" novalidate>
+        <div class="form-grid">
+          <div class="field">
+            <label for="user-name">Nama user</label>
+            <input id="user-name" name="name" type="text" maxlength="100" placeholder="Contoh: Andi Saputra" autocomplete="name" required>
+          </div>
+          <div class="field">
+            <label for="user-url">Link URL</label>
+            <input id="user-url" name="url" type="url" placeholder="https://contoh.com/tugas" inputmode="url" required>
+          </div>
+          <button class="btn btn-primary" type="submit">＋ Tambah link</button>
+        </div>
+        <div id="form-message" class="message" role="status" aria-live="polite"></div>
+      </form>
+    </section>
+
+    <section class="list-section" aria-labelledby="list-title">
+      <div class="list-heading">
+        <div>
+          <h2 id="list-title">Daftar link</h2>
+          <p>Kelola dan temukan tautan yang sudah dikumpulkan.</p>
+        </div>
+        <span id="item-count" class="count" aria-label="Jumlah data">0</span>
+      </div>
+
+      <div class="panel">
+        <div class="toolbar">
+          <div class="search-wrap">
+            <span aria-hidden="true">⌕</span>
+            <input id="search-input" type="search" placeholder="Cari nama user..." aria-label="Cari nama user">
+          </div>
+          <div class="field">
+            <label for="sort-select">Urutkan berdasarkan</label>
+            <select id="sort-select">
+              <option value="newest">Waktu: terbaru</option>
+              <option value="oldest">Waktu: terlama</option>
+              <option value="az">Nama: A–Z</option>
+              <option value="za">Nama: Z–A</option>
+            </select>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table aria-label="Daftar link yang dikumpulkan">
+            <thead>
+              <tr><th>No.</th><th>Nama user</th><th>Link</th><th>Waktu input</th><th>Aksi</th></tr>
+            </thead>
+            <tbody id="link-table-body"></tbody>
+          </table>
+          <div id="empty-state" class="empty">
+            <div class="empty-icon" aria-hidden="true">↗</div>
+            <h3>Belum ada link</h3>
+            <p>Tambahkan link pertama melalui formulir di atas.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>Link Storage · Data disimpan secara lokal menggunakan IndexedDB.</footer>
+
+  <!-- File helper IndexedDB -->
+  <script src="db.js"></script>
+
+  <!-- Script Aplikasi Main Logic -->
+  <script>
+    (async () => {
+      'use strict';
+      const form = document.getElementById('link-form');
+      const nameInput = document.getElementById('user-name');
+      const urlInput = document.getElementById('user-url');
+      const message = document.getElementById('form-message');
+      const searchInput = document.getElementById('search-input');
+      const sortSelect = document.getElementById('sort-select');
+      const tableBody = document.getElementById('link-table-body');
+      const emptyState = document.getElementById('empty-state');
+      const itemCount = document.getElementById('item-count');
+
+      let items = [];
+
+      // Memuat data awal dari IndexedDB
+      try {
+        items = await getAllLinks();
+      } catch (error) {
+        console.error('Gagal mengambil data dari IndexedDB:', error);
+        showMessage('Gagal memuat data dari IndexedDB.', true);
+      }
+
+      function showMessage(text, isError = false) {
+        message.textContent = text;
+        message.classList.toggle('error', isError);
+      }
+
+      function normalizeUrl(value) {
+        const trimmed = value.trim();
+        const candidate = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+        try {
+          const parsed = new URL(candidate);
+          if (!['http:', 'https:'].includes(parsed.protocol) || !parsed.hostname.includes('.')) return null;
+          return parsed.href;
+        } catch {
+          return null;
+        }
+      }
+
+      function formatDate(timestamp) {
+        return new Intl.DateTimeFormat('id-ID', {
+          day: '2-digit', month: 'short', year: 'numeric',
+          hour: '2-digit', minute: '2-digit'
+        }).format(new Date(timestamp));
+      }
+
+      function makeCell(className, text) {
+        const td = document.createElement('td');
+        if (className) td.className = className;
+        if (text !== undefined) td.textContent = text;
+        return td;
+      }
+
+      function render() {
+        const query = searchInput.value.trim().toLocaleLowerCase('id-ID');
+        const sort = sortSelect.value;
+        const filtered = items.filter(item => item.name.toLocaleLowerCase('id-ID').includes(query));
+        filtered.sort((a, b) => {
+          if (sort === 'az') return a.name.localeCompare(b.name, 'id', { sensitivity: 'base' });
+          if (sort === 'za') return b.name.localeCompare(a.name, 'id', { sensitivity: 'base' });
+          if (sort === 'oldest') return a.createdAt - b.createdAt;
+          return b.createdAt - a.createdAt;
+        });
+
+        tableBody.replaceChildren();
+        itemCount.textContent = String(items.length);
+        emptyState.hidden = filtered.length > 0;
+        if (filtered.length === 0) {
+          const heading = emptyState.querySelector('h3');
+          const description = emptyState.querySelector('p');
+          heading.textContent = items.length ? 'Nama tidak ditemukan' : 'Belum ada link';
+          description.textContent = items.length ? 'Coba kata kunci pencarian yang lain.' : 'Tambahkan link pertama melalui formulir di atas.';
+          return;
+        }
+
+        filtered.forEach((item, index) => {
+          const tr = document.createElement('tr');
+          tr.appendChild(makeCell('number', String(index + 1)));
+
+          const userCell = makeCell('user-col');
+          const userWrap = document.createElement('div');
+          userWrap.className = 'user-cell';
+          const avatar = document.createElement('span');
+          avatar.className = 'avatar';
+          avatar.setAttribute('aria-hidden', 'true');
+          avatar.textContent = item.name.trim().charAt(0) || '?';
+          const userName = document.createElement('span');
+          userName.className = 'user-name';
+          userName.textContent = item.name;
+          userWrap.append(avatar, userName);
+          userCell.appendChild(userWrap);
+          tr.appendChild(userCell);
+
+          const linkCell = makeCell('link-col');
+          const anchor = document.createElement('a');
+          anchor.className = 'link-anchor';
+          anchor.href = item.url;
+          anchor.target = '_blank';
+          anchor.rel = 'noopener noreferrer';
+          anchor.title = item.url;
+          anchor.textContent = item.url;
+          linkCell.appendChild(anchor);
+          tr.appendChild(linkCell);
+
+          const timeCell = makeCell('time-col');
+          const time = document.createElement('time');
+          time.className = 'time';
+          time.dateTime = new Date(item.createdAt).toISOString();
+          time.textContent = formatDate(item.createdAt);
+          timeCell.appendChild(time);
+          tr.appendChild(timeCell);
+
+          const actionCell = makeCell('action-col');
+          const deleteButton = document.createElement('button');
+          deleteButton.type = 'button';
+          deleteButton.className = 'delete-btn';
+          deleteButton.textContent = 'Hapus';
+          deleteButton.setAttribute('aria-label', `Hapus link milik ${item.name}`);
+          deleteButton.addEventListener('click', () => handleDelete(item.id));
+          actionCell.appendChild(deleteButton);
+          tr.appendChild(actionCell);
+          tableBody.appendChild(tr);
+        });
+      }
+
+      async function handleDelete(id) {
+        const item = items.find(entry => entry.id === id);
+        if (!item) return;
+        if (!window.confirm(`Hapus link milik "${item.name}"?`)) return;
+
+        try {
+          await deleteLink(id);
+          items = items.filter(entry => entry.id !== id);
+          showMessage('Link berhasil dihapus.');
+          render();
+        } catch (error) {
+          console.error('Gagal menghapus link:', error);
+          showMessage('Gagal menghapus data dari IndexedDB.', true);
+        }
+      }
+
+      form.addEventListener('submit', async event => {
+        event.preventDefault();
+        const name = nameInput.value.trim();
+        const url = normalizeUrl(urlInput.value);
+        if (!name) {
+          showMessage('Nama user wajib diisi.', true);
+ 
